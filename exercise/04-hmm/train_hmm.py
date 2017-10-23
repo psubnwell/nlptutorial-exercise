@@ -17,11 +17,14 @@ def train_hmm(training_file, model_file):
             context[previous] += 1
             for wordtag in line.strip().split(' '):
                 word, tag = wordtag.split('_')
-                transition[previous + ' ' + tag] += 1  # Count the transition.
+                # Count the transition.
+                transition['{} {}'.format(previous, tag)] += 1
                 context[tag] += 1  # Count the context.
-                emit[tag + ' ' + word] += 1  # Count the emission.
+                # Count the emission.
+                emit['{} {}'.format(tag, word)] += 1
                 previous = tag
-            transition[previous + ' ' + EOS] += 1  # Make the sentence end.
+            # Make the sentence end.
+            transition['{} {}'.format(previous, EOS)] += 1
 
     # Save the info into a buffer temporarily.
     out = io.StringIO()

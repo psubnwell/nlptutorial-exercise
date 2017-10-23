@@ -62,7 +62,7 @@ def prob_emiss(key, model):
     """
     return LAMBDA * model[key] + (1 - LAMBDA) * 1 / N
 
-def forward(transition, emission, possible_tags, line):
+def forward_neubig(transition, emission, possible_tags, line):
     """The forward process of the Viterbi algorithm,
     described in Neubig's slides p.42.
 
@@ -71,7 +71,7 @@ def forward(transition, emission, possible_tags, line):
     1) The `possible_tags` contains SOS (default <s>).
     2) Exchanging the outer loop and the inner loop will be more fit with the
     process described in the slides.
-    Refer to `forward_new()`.
+    Refer to `forward()`.
 
     Args:
         transition: <dict>
@@ -121,7 +121,7 @@ def forward(transition, emission, possible_tags, line):
 
     return best_edge
 
-def forward_new(transition, emission, possible_tags, line):
+def forward(transition, emission, possible_tags, line):
     """The forward process of the Viterbi algorithm,
     described in Neubig's slides p.38-40.
     Notice: Maybe this version of `forward()` is more easy for understanding.
@@ -197,6 +197,15 @@ def forward_new(transition, emission, possible_tags, line):
     return best_edge
 
 def backward(best_edge, line):
+    """The backward part of Viterbi algorithm.
+
+    Args:
+        best_edge: <list> Each component contains previous best edge.
+        line: <str> A line of the file.
+
+    Returns:
+        The tag sequence.
+    """
     words = line.strip().split(' ')
     l = len(words)
     tags = []
@@ -216,7 +225,7 @@ def test_hmm(model_file, test_file, output_file):
 
     with open(test_file, 'r') as f:
         for line in f:
-            best_edge = forward_new(transition, emission, possible_tags, line)
+            best_edge = forward(transition, emission, possible_tags, line)
             tags = backward(best_edge, line)
             out.write(' '.join(tags) + '\n')
 
